@@ -14,7 +14,6 @@ int main(){
 
     ElevatorControlStruct elevatorControl = *elevatorControlInitializer();
     while (1){
-
      if (elevio_stopButton){
             elevatorControl.currentState = EmergencyStop;
             break;
