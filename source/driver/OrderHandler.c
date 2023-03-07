@@ -9,7 +9,7 @@
 //#include <pthread.h>
 
 void orderHandlerInitializeHandler(void){
-    OrderHandlerStruct orderHandler={{{0,0,0},{0,0,0},{0,0,0},{0,0,0}}};
+    OrderHandlerStruct orderHandler = {{{0,0,0},{0,0,0},{0,0,0},{0,0,0}}};
     orderHandler.addToOrderHandlerMatrix = addToOrderHandlerMatrix;
     orderHandler.deleteFromOrderHandlerMatrix = deleteFromOrderHandlerMatrix;
     orderHandler.isThereRequestAbove = isThereRequestAbove;
@@ -29,19 +29,39 @@ void deleteFromOrderHandlerMatrix(OrderHandlerStruct *inst, int floor, RequestTy
     inst->orderMatrix[floor-1][typeOfRequest] = 0;
 }
 
-bool isThereRequestAbove(OrderHandlerStruct *inst,int floor){
-
+bool isThereRequestAbove(OrderHandlerStruct *inst,int currentFloor){
+    for (int i = currentFloor - 1; i < 4; i++){
+        for (int j = 0; j < 3; j++){
+            if (inst->orderMatrix[i][j] == true){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-bool isThereRequestAbove(OrderHandlerStruct *inst,int floor){
-
+bool isThereRequestBelow(OrderHandlerStruct *inst,int currentFloor){
+    for (int i = currentFloor - 1; i >= 0; i--){
+        for (int j = 0; j < 3; j++){
+            if (inst->orderMatrix[i][j] == true){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-int isThereRequestAtFloor(OrderHandlerStruct *inst,int floor){
+bool isThereRequestAtFloor(OrderHandlerStruct *inst,int currentFloor, RequestType typeOfRequest){
+    if (inst->orderMatrix[currentFloor - 1][2] == true){
+        return true;
+    }
 
+    if(inst->orderMatrix[currentFloor - 1][typeOfRequest] == true){
+        return true;
+     }
+    
+    return false;
 }
 
-bool isThereRequestBelow(OrderHandlerStruct *inst,int floor){
 
-}
 

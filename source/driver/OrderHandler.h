@@ -12,16 +12,16 @@ typedef struct OrderHandlerStruct
     bool orderMatrix [4][3];
     void (*addToOrderHandlerMatrix)(OrderHandlerStruct *, int floor, RequestType typeOfRequest);
     void (*deleteFromOrderHandlerMatrix)(OrderHandlerStruct *,int floor, RequestType typeOfRequest);
-    bool (*isThereRequestAbove)(OrderHandlerStruct *inst,int floor);
-    bool (*isThereRequestBelow)(OrderHandlerStruct *inst,int floor);
-    int (*isThereRequestAtFloor)(OrderHandlerStruct *inst,int floor);
+    bool (*isThereRequestAbove)(OrderHandlerStruct *inst,int currentFloor);
+    bool (*isThereRequestBelow)(OrderHandlerStruct *inst,int currentFloor);
+    bool (*isThereRequestAtFloor)(OrderHandlerStruct *inst,int currentFloor, RequestType typeOfRequest);
 }OrderHandlerStruct;
 
 void addToOrderHandlerMatrix(OrderHandlerStruct *inst, int floor, RequestType typeOfRequest);//Adds an order of the specified type to the floor
 void deleteFromOrderHandlerMatrix(OrderHandlerStruct *inst,int floor, RequestType typeOfRequest);//Deletes an order of the specified type to the floor
-bool isThereRequestAbove(OrderHandlerStruct *inst,int floor);//Checks if there are any requests above the floor. 
-int isThereRequestAtFloor(OrderHandlerStruct *inst,int floor);//Checks if there are any requests above the floor. 
-bool isThereRequestBelow(OrderHandlerStruct *inst,int floor);//Checks if there are any requests above the floor. 
+bool isThereRequestAbove(OrderHandlerStruct *inst,int currentFloor);//Checks if there are any requests above the floor. 
+bool isThereRequestAtFloor(OrderHandlerStruct *inst,int currentFloor, RequestType typeOfRequest);//Checks if there are any requests above the floor. 
+bool isThereRequestBelow(OrderHandlerStruct *inst,int currentFloor);//Checks if there are any requests above the floor. 
 
 void orderHandlerInitializeHandler(void);
 //This function initializes a 4x3 matrix to hold requests for elevator floors and cabin buttons. 
