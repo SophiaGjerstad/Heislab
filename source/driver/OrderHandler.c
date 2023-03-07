@@ -8,13 +8,14 @@
 //#include <assert.h>
 //#include <pthread.h>
 
-void orderHandlerInitializeHandler(void){
+OrderHandlerStruct* orderHandlerInitializer(){
     OrderHandlerStruct orderHandler = {{{0,0,0},{0,0,0},{0,0,0},{0,0,0}}};
     orderHandler.addToOrderHandlerMatrix = addToOrderHandlerMatrix;
     orderHandler.deleteFromOrderHandlerMatrix = deleteFromOrderHandlerMatrix;
     orderHandler.isThereRequestAbove = isThereRequestAbove;
     orderHandler.isThereRequestBelow = isThereRequestBelow;
     orderHandler.isThereRequestAtFloor = isThereRequestAtFloor;
+    return &orderHandler;
     //dynamically allocate memory to 4x3 matrix. 
     //set values to 0. 
     //return a pointer to matrix somehow? We need to keep track of the initialized matrix and
