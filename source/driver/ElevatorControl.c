@@ -53,7 +53,7 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
     {
     case UpMode:
         //Stopper dersom det er en relevant bestilling på etasjen
-        if (elevatorControlPointer->orderHandler.isThereRequestAtFloor(&elevatorControlPointer, elevatorControlPointer->currentFloor, UpRequest)){ 
+        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, UpRequest)){ 
             return true;
         }
         return false;
@@ -61,7 +61,7 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
 
     case DownMode:
         //Stopper dersom det er en relevant bestilling på etasjen
-        if (elevatorControlPointer->orderHandler.isThereRequestAtFloor(&elevatorControlPointer, elevatorControlPointer->currentFloor, DownRequest)){ 
+        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, DownRequest)){ 
             return true;
         }
         return false;
@@ -69,10 +69,10 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
 
     case NoMode:
         //Stopper dersom det er en relevant bestilling på etasjen. Sjekker begge request typer.
-        if (elevatorControlPointer->orderHandler.isThereRequestAtFloor(&elevatorControlPointer, elevatorControlPointer->currentFloor, UpRequest)){ 
+        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, UpRequest)){ 
             return true;
         }
-        if (elevatorControlPointer->orderHandler.isThereRequestAtFloor(&elevatorControlPointer,elevatorControlPointer->currentFloor, DownRequest)){
+        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor, DownRequest)){
             return true;
         }
         
