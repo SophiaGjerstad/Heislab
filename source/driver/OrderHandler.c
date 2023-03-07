@@ -10,8 +10,8 @@
 
 OrderHandlerStruct* orderHandlerInitializer(){
     OrderHandlerStruct orderHandler = {{{0,0,0},{0,0,0},{0,0,0},{0,0,0}}};
-    orderHandler.addToOrderHandlerMatrix = addToOrderHandlerMatrix;
-    orderHandler.deleteFromOrderHandlerMatrix = deleteFromOrderHandlerMatrix;
+    orderHandler.addToMatrix = addToOrderHandlerMatrix;
+    orderHandler.deleteFromMatrix = deleteFromOrderHandlerMatrix;
     orderHandler.isThereRequestAbove = isThereRequestAbove;
     orderHandler.isThereRequestBelow = isThereRequestBelow;
     orderHandler.isThereRequestAtFloor = isThereRequestAtFloor;

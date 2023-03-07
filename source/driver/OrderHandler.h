@@ -2,16 +2,16 @@
 #include <stdbool.h>
 
 typedef enum {
-    Upp,
-    Down,
+    UpRequest,
+    DownRequest,
     CabinRequest
 }RequestType;
 
 typedef struct OrderHandlerStruct
 {
     bool orderMatrix [4][3];
-    void (*addToOrderHandlerMatrix)(OrderHandlerStruct *, int floor, RequestType typeOfRequest);
-    void (*deleteFromOrderHandlerMatrix)(OrderHandlerStruct *,int floor, RequestType typeOfRequest);
+    void (*addToMatrix)(OrderHandlerStruct *, int floor, RequestType typeOfRequest);
+    void (*deleteFromMatrix)(OrderHandlerStruct *,int floor, RequestType typeOfRequest);
     bool (*isThereRequestAbove)(OrderHandlerStruct *inst,int currentFloor);
     bool (*isThereRequestBelow)(OrderHandlerStruct *inst,int currentFloor);
     bool (*isThereRequestAtFloor)(OrderHandlerStruct *inst,int currentFloor, RequestType typeOfRequest);

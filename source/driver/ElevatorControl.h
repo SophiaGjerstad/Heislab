@@ -1,26 +1,28 @@
 #pragma once
 #include "Door.h"
+#include "elevio.h"
+#include "OrderHandler.h"
 
 //This file will contain functions that will be implemented in a state-machine based switch in main?
 
 typedef enum {Idle, EmergencyStop, MovingUp, MovingDown, Startup, ServicingFloor} State;
 
-typedef enum {Up, Down, none} ServiceMode;
+typedef enum {UpMode, DownMode, NoMode} ServiceMode;
 
 typedef struct ElevatorControlStruct{
     int currentFloor;
     State currentState;
     ServiceMode currentServiceingMode;
+    OrderHandlerStruct orderHandler;
+    Door door;
 }ElevatorControlStruct;
 
 ElevatorControlStruct* elevatorControlInitializer(void);
-
-void elevatorControlSetElevatorMode(ElevatorControlStruct *inst, ServiceMode typeOfServiceMode);
-void elevatorControlSetElevatorState(ElevatorControlStruct *inst, State typeOfState);
-void elevatorControlStartElevator(void);
-void elevatorControlStopElevator(void);
+void elevatorControlSetElevatorMode(ElevatorControlStruct *elevatorControlPointer, ServiceMode typeOfServiceMode);
+void elevatorControlSetElevatorState(ElevatorControlStruct *elevatorControlPointer, State typeOfState);
 bool elevatorControlCheckObstruction(void);
-void elevatorControlOpenDoor(Door *inst);
-void elevatorControlCloseDoor(Door *inst);
-void elevatorControlUpdateFloor(ElevatorControlStruct *inst);
-bool elevatorControlCheckIfStopped(ElevatorControlStruct *inst);
+void elevatorControlOpenDoor(ElevatorControlStruct *elevatorControlPointer);
+void elevatorControlCloseDoor(ElevatorControlStruct *elevatorControlPointer);
+void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer);
+bool elevatorControlCheckIfShouldStop(ElevatorControlStruct *elevatorControlPointer);
+
