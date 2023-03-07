@@ -7,20 +7,20 @@ typedef enum {Idle, EmergencyStop, MovingUp, MovingDown, Startup, ServicingFloor
 
 typedef enum {Up, Down, none} ServiceMode;
 
-typedef struct ElevatorControl{
+typedef struct ElevatorControlStruct{
     int currentFloor;
     State currentState;
     ServiceMode currentServiceingMode;
-}ElevatorControl;
+}ElevatorControlStruct;
 
-ElevatorControl* elevatorControlInitializer(void);
+ElevatorControlStruct* elevatorControlInitializer(void);
 
-void elevatorControlSetElevatorMode(ElevatorControl *inst, ServiceMode typeOfServiceMode);
-void elevatorControlSetElevatorState(ElevatorControl *inst, State typeOfState);
+void elevatorControlSetElevatorMode(ElevatorControlStruct *inst, ServiceMode typeOfServiceMode);
+void elevatorControlSetElevatorState(ElevatorControlStruct *inst, State typeOfState);
 void elevatorControlStartElevator(void);
 void elevatorControlStopElevator(void);
 bool elevatorControlCheckObstruction(void);
 void elevatorControlOpenDoor(Door *inst);
 void elevatorControlCloseDoor(Door *inst);
-void elevatorControlUpdateFloor(ElevatorControl *inst);
-bool elevatorControlCheckIfStopped(ElevatorControl *inst);
+void elevatorControlUpdateFloor(ElevatorControlStruct *inst);
+bool elevatorControlCheckIfStopped(ElevatorControlStruct *inst);
