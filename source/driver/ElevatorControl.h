@@ -5,7 +5,7 @@
 
 //This file will contain functions that will be implemented in a state-machine based switch in main?
 
-typedef enum {Idle, EmergencyStop, MovingUp, MovingDown, Startup, ServicingFloor} State;
+typedef enum {Startup, Idle, EmergencyStop, MovingUp, MovingDown, ServicingFloor} State;
 
 typedef enum {UpMode, DownMode, NoMode} ServiceMode;
 
