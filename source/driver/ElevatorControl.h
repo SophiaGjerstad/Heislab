@@ -25,7 +25,7 @@ void elevatorControlOpenDoor(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlCloseDoor(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer);
 bool elevatorControlCheckIfShouldStop(ElevatorControlStruct *elevatorControlPointer);
-void elevatorControlMoveUp();
-void elevatorControlMoveDown();
+void elevatorControlMoveElevatorUp();
+void elevatorControlMoveElevatorDown();
 void elevatorControlStopElevator();
 
