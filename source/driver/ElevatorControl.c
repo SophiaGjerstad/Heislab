@@ -85,8 +85,12 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
     }
 }
 
-void elevatorControlStartElevator(MotorDirection direction){
-    elevio_motorDirection(direction);
+void elevatorControlMoveUp(){
+    elevio_motorDirection(DIRN_UP);
+}
+
+void elevatorControlMoveDown(){
+    elevio_motorDirection(DIRN_DOWN);
 }
 
 void elevatorControlStopElevator(){
