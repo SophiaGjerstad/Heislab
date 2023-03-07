@@ -10,11 +10,6 @@
 
 OrderHandlerStruct* orderHandlerInitializer(){
     OrderHandlerStruct orderHandler = {{{0,0,0},{0,0,0},{0,0,0},{0,0,0}}};
-    orderHandler.addToMatrix = addToOrderHandlerMatrix;
-    orderHandler.deleteFromMatrix = deleteFromOrderHandlerMatrix;
-    orderHandler.isThereRequestAbove = isThereRequestAbove;
-    orderHandler.isThereRequestBelow = isThereRequestBelow;
-    orderHandler.isThereRequestAtFloor = isThereRequestAtFloor;
     return &orderHandler;
     //dynamically allocate memory to 4x3 matrix. 
     //set values to 0. 
@@ -28,6 +23,14 @@ void addToOrderHandlerMatrix(OrderHandlerStruct *inst, int floor, RequestType ty
 
 void deleteFromOrderHandlerMatrix(OrderHandlerStruct *inst, int floor, RequestType typeOfRequest){
     inst->orderMatrix[floor-1][typeOfRequest] = 0;
+}
+
+void clearOrderHandlerMatrix(OrderHandlerStruct *inst){
+    for (int i = 0; i<4; i++){
+        for (int j = 0; j<3; j++){
+            inst->orderMatrix[i][j] = 0;
+        }
+    }
 }
 
 bool isThereRequestAbove(OrderHandlerStruct *inst,int currentFloor){
@@ -63,6 +66,8 @@ bool isThereRequestAtFloor(OrderHandlerStruct *inst,int currentFloor, RequestTyp
     
     return false;
 }
+
+
 
 
 
