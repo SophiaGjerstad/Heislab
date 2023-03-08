@@ -167,7 +167,7 @@ int main(){
                 break;
                 }
                
-                if(elevatorControlCheckObstruction()){
+                if(!elevatorControlCheckObstruction()){
                     elevatorControlCloseDoor(&elevatorControl);
                     elevatorControl.currentState = Idle;
                     break;
