@@ -8,7 +8,7 @@
 //#include <pthread.h>
 #include "Timer.h"
 
-void AlertAfter3Seconds(void) {
+void TimerAlertAfter3Seconds(void) {
     double start = time(NULL);
     double diff = 0;
     while(diff<3) {
