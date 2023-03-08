@@ -26,25 +26,28 @@ void elevatorControlSetElevatorState(ElevatorControlStruct *elevatorControlPoint
 }
 
 bool elevatorControlCheckObstruction(void){
-
+    return elevio_obstruction();
 }
 
 
 void elevatorControlOpenDoor(ElevatorControlStruct *elevatorControlPointer){
     elevatorControlPointer->door.doorOpen = true;
     elevatorControlPointer->door.doorLampOn = true;
+    elevio_doorOpenLamp(1);
 }
 
 
 void elevatorControlCloseDoor(ElevatorControlStruct *elevatorControlPointer){
     elevatorControlPointer->door.doorOpen = false;
     elevatorControlPointer->door.doorLampOn = false;
+    elevio_doorOpenLamp(0);
 }
 
 
 void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer){
     if (elevio_floorSensor != -1){
         elevatorControlPointer->currentFloor = elevio_floorSensor;
+        elevio_floorIndicator(elevio_floorSensor());
     }
 }
 
@@ -97,3 +100,37 @@ void elevatorControlStopElevator(){
     elevio_motorDirection(DIRN_STOP);
 }
 
+void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer){
+
+     for(int f = 0; f < N_FLOORS; f++){
+            for(int b = 0; b < N_BUTTONS; b++){
+                int btnPressed = elevio_callButton(f, b);
+                elevio_buttonLamp(f, b, btnPressed);
+                addToOrderHandlerMatrix(&elevatorControlPointer->orderHandler, f, b);
+            }
+        }
+
+    if(elevio_obstruction()){
+            elevio_stopLamp(1);
+    } else {
+            elevio_stopLamp(0);
+    }
+}
+
+void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer){
+    for (int button = 0; button < N_BUTTONS; button++){
+        elevio_buttonLamp(elevatorControlPointer->currentFloor - 1, button, 0);
+        deleteFromOrderHandlerMatrix(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor - 1, button);
+    }
+}
+
+void elevatorControlClearAllOrders(ElevatorControlStruct *elevatorControlPointer){
+    for (int floor = 0; floor < N_FLOORS; floor++){
+        elevatorControlDeleteOrdersOnFloor(elevatorControlPointer);
+    }
+
+}
+
+
+
+//Manger: ServiceFloor funksjonalitet som sletter bestillinger og skrur av lamper. 
