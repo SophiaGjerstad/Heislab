@@ -29,6 +29,6 @@ void elevatorControlMoveElevatorUp();
 void elevatorControlMoveElevatorDown();
 void elevatorControlStopElevator();
 void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer);
-void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer)
-void elevatorControlClearAllOrders(ElevatorControlStruct *elevatorControlPointer)
+void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer);
+void elevatorControlClearAllOrders(ElevatorControlStruct *elevatorControlPointer);
 

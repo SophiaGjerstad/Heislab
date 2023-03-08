@@ -168,12 +168,12 @@ int main(){
                 
                 elevatorControlUpdateInfo(&elevatorControl);
                 
-                if (elevio_stopButton()()){
+                if (elevio_stopButton()){
                 elevatorControlStopElevator();
                 elevatorControl.currentState = EmergencyStop;
                 continue;
                 }
-                
+
                 if(!elevatorControlCheckObstruction()){
                     elevatorControlCloseDoor(&elevatorControl);
                     elevatorControl.currentState = Idle;
