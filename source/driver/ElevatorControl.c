@@ -56,6 +56,10 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
         if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, UpRequest)){ 
             return true;
         }
+        //Stopper også dersom det ikke finnes bestillinger i etasjer over
+        if (isThereRequestAbove(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor == false)){
+            return true;
+        }
         return false;
         break;
 
@@ -64,6 +68,11 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
         if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, DownRequest)){ 
             return true;
         }
+        //Stopper også dersom det ikke finnes bestillinger i etasjer under
+        if (isThereRequestBelow(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor == false)){
+            return true;
+        }
+
         return false;
         break;
 
