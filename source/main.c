@@ -75,6 +75,12 @@ int main(){
                     elevatorControl.currentState = ServicingFloor;
                     break;
                 }
+
+                if (!isThereRequestBelow(&elevatorControl,elevatorControl.currentFloor)){
+                    elevatorControlStopElevator();
+                    elevatorControl.currentState = Idle;
+                    break;
+                }
             }
             break;
 
@@ -89,12 +95,19 @@ int main(){
                     }
                     elevatorControlUpdateFloor(&elevatorControl);
                 }
-                if (elevatorControlCheckIfShouldStop(elevatorControl.currentFloor)){
+
+                if (elevatorControlCheckIfShouldService(elevatorControl.currentFloor)){
                     elevatorControlStopElevator();
                     elevatorControl.currentState = ServicingFloor;
                     break;
                 }
-            }
+                
+                if (!isThereRequestBelow(&elevatorControl,elevatorControl.currentFloor)){
+                    elevatorControlStopElevator();
+                    elevatorControl.currentState = Idle;
+                    break;
+                }
+               
             break;
 
         
