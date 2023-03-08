@@ -25,13 +25,6 @@ void deleteFromOrderHandlerMatrix(OrderHandlerStruct *inst, int floor, RequestTy
     inst->orderMatrix[floor-1][typeOfRequest] = 0;
 }
 
-void clearOrderHandlerMatrix(OrderHandlerStruct *inst){
-    for (int i = 0; i<4; i++){
-        for (int j = 0; j<3; j++){
-            inst->orderMatrix[i][j] = 0;
-        }
-    }
-}
 
 bool isThereRequestAbove(OrderHandlerStruct *inst,int currentFloor){
     for (int i = currentFloor - 1; i < 4; i++){

@@ -14,7 +14,6 @@ typedef struct OrderHandlerStruct
 
 void addToOrderHandlerMatrix(OrderHandlerStruct *inst, int floor, RequestType typeOfRequest);//Adds an order of the specified type to the floor
 void deleteFromOrderHandlerMatrix(OrderHandlerStruct *inst,int floor, RequestType typeOfRequest);//Deletes an order of the specified type to the floor
-void clearOrderHandlerMatrix(OrderHandlerStruct *inst);
 bool isThereRequestAbove(OrderHandlerStruct *inst,int currentFloor);//Checks if there are any requests above the floor. 
 bool isThereRequestAtFloor(OrderHandlerStruct *inst,int currentFloor, RequestType typeOfRequest);//Checks if there are any requests above the floor. 
 bool isThereRequestBelow(OrderHandlerStruct *inst,int currentFloor);//Checks if there are any requests above the floor. 
