@@ -110,6 +110,7 @@ int main(){
             break; //mulig overflødig break
 
         case Idle:
+            
             elevatorControlUpdateInfo(&elevatorControl);
             if ((elevatorControl.currentServiceingMode == UpMode) && isThereRequestAbove(&elevatorControl.orderHandler,elevatorControl.currentFloor)){
                 elevatorControlMoveElevatorUp();
@@ -123,19 +124,10 @@ int main(){
                 break;
             }
 
-            case MovingDown:
-                while (1){
-                        elevatorControlUpdateInfo(&elevatorControl);
-                        int lastFloor = elevatorControl.currentFloor;
-                        while (lastFloor == elevatorControl.currentFloor){
-                            elevatorControlUpdateInfo(&elevatorControl);
-                            if (elevio_stopButton()){
-                                elevatorControlStopElevator();
-                                elevatorControl.currentState = EmergencyStop;
-                                continue;
-                            }
-                            elevatorControlUpdateFloor(&elevatorControl);
-                        }
+            elevatorControl.currentServiceingMode == NoMode;
+            
+            while(1){
+                elevatorControlUpdateInfo(&elevatorControl);
 
                         if (elevatorControlCheckIfShouldService(elevatorControl.currentFloor)){
                             elevatorControlStopElevator();
@@ -189,9 +181,10 @@ int main(){
             elevatorControlClearAllOrders(&elevatorControl);
             
             while (elevio_stopButton()){
-                elevatorControl.timer = time(NULL);
+                
             }
-
+            
+            elevatorControl.timer = time(NULL);
             elevio_stopLamp(0);
 
             if (elevatorControl.door.doorOpen){
