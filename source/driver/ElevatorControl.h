@@ -1,5 +1,5 @@
 #pragma once
-#include "Door.h"
+#include "door.h"
 #include "elevio.h"
 #include "OrderHandler.h"
 
