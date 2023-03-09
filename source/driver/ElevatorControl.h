@@ -30,7 +30,7 @@ void elevatorControlMoveElevatorUp();
 void elevatorControlMoveElevatorDown();
 void elevatorControlStopElevator();
 void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer);
-void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer);
+void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer, int floor);
 void elevatorControlClearAllOrders(ElevatorControlStruct *elevatorControlPointer);
 
 bool hasBeen3Seconds(double start_time);

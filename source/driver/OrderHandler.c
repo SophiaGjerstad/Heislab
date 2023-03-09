@@ -28,7 +28,7 @@ void deleteFromOrderHandlerMatrix(OrderHandlerStruct *inst, int floor, RequestTy
 
 
 bool isThereRequestAbove(OrderHandlerStruct inst,int currentFloor){
-    for (int i = currentFloor; i < 4; i++){
+    for (int i = currentFloor+1; i < 4; i++){
         for (int j = 0; j < 3; j++){
             if (inst.orderMatrix[i][j] == true){
                 return true;
@@ -39,7 +39,7 @@ bool isThereRequestAbove(OrderHandlerStruct inst,int currentFloor){
 }
 
 bool isThereRequestBelow(OrderHandlerStruct inst,int currentFloor){
-    for (int i = currentFloor; i >= 0; i--){
+    for (int i = currentFloor-1; i >= 0; i--){
         for (int j = 0; j < 3; j++){
             if (inst.orderMatrix[i][j] == true){
                 return true;

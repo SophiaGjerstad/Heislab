@@ -39,6 +39,7 @@ void elevatorControlOpenDoor(ElevatorControlStruct *elevatorControlPointer){
 }
 
 
+
 void elevatorControlCloseDoor(ElevatorControlStruct *elevatorControlPointer){
     elevatorControlPointer->door.doorOpen = false;
     elevatorControlPointer->door.doorLampOn = false;
@@ -95,6 +96,7 @@ void elevatorControlMoveElevatorUp(){
 }
 
 void elevatorControlMoveElevatorDown(){
+
     elevio_motorDirection(DIRN_DOWN);
 }
 
@@ -114,23 +116,24 @@ void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer){
     }
 }
 
-void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer){
+void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer, int floor){
     for (int button = 0; button < N_BUTTONS; button++){
-        elevio_buttonLamp(elevatorControlPointer->currentFloor, button, 0);
-        deleteFromOrderHandlerMatrix(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor, button);
+        elevio_buttonLamp(floor, button, 0);
+        deleteFromOrderHandlerMatrix(&elevatorControlPointer->orderHandler,floor, button);
     }
 }
 
 void elevatorControlClearAllOrders(ElevatorControlStruct *elevatorControlPointer){
+    printf("Clearing all floors\n");
     for (int floor = 0; floor < N_FLOORS; floor++){
-        elevatorControlDeleteOrdersOnFloor(elevatorControlPointer);
+        elevatorControlDeleteOrdersOnFloor(elevatorControlPointer, floor);
     }
 
 }
 
 bool hasBeen3Seconds(double start_time) {
     double end = time(NULL);
-    if(difftime(end,start_time)<=3) {
+    if(difftime(end,start_time) >=3) {
         return 1;
     }
     else {
@@ -138,6 +141,3 @@ bool hasBeen3Seconds(double start_time) {
     }
 }
 
-
-
-//Manger: ServiceFloor funksjonalitet som sletter bestillinger og skrur av lamper. 

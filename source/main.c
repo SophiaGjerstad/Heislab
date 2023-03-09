@@ -11,10 +11,12 @@
 int main(){
 
     elevio_init();
-
+    
     ElevatorControlStruct elevatorControl_o = elevatorControlInitializer();
     ElevatorControlStruct *elevatorControl = &elevatorControl_o;
+    elevatorControlClearAllOrders(elevatorControl);
     while (1){
+        emergency:
         
         if (elevio_stopButton()){
             elevatorControl->currentState = EmergencyStop;
@@ -23,22 +25,24 @@ int main(){
         switch (elevatorControl->currentState){
 
         case Startup:
+            printf("Starting Startup\n");
             if (elevatorControl->door.doorOpen == false){
-
+                printf("Door not open, moving down\n");
                 elevatorControlMoveElevatorDown();
                 bool done = false;
                 while (!done){
                     int floor = elevio_floorSensor();
                     if (floor != -1){
+                        printf("%d\n",floor);
                         elevatorControlUpdateFloor(elevatorControl, floor);
                         break;
                     }
-                    elevatorControlUpdateInfo(elevatorControl);
                     if (elevio_stopButton()){
                         elevatorControlStopElevator();
                         elevatorControl->currentState = EmergencyStop;
                         break;
                     }
+
                 }
                
                 
@@ -48,7 +52,7 @@ int main(){
                         elevatorControl->currentState = EmergencyStop;
                         break;
                 }
-
+                printf ("Stopping\n");
                 elevatorControlStopElevator();
                 elevatorControl->currentState = Idle;
             } else {
@@ -79,22 +83,25 @@ int main(){
             break; //mulig overflødig break
 
         case Idle:
-            
+            printf("Entering Idle\n");
             elevatorControlUpdateInfo(elevatorControl);
             if ((elevatorControl->currentServiceingMode == UpMode) && isThereRequestAbove(elevatorControl->orderHandler,elevatorControl->currentFloor)){
+                printf("I see a request above, moving up\n");
                 elevatorControlMoveElevatorUp();
                 elevatorControl->currentState = MovingUp;
                 break;
             }
 
             if ((elevatorControl->currentServiceingMode == DownMode) && isThereRequestBelow(elevatorControl->orderHandler,elevatorControl->currentFloor)){
+                printf("I see a request below, moving down\n");
                 elevatorControlMoveElevatorDown();
                 elevatorControl->currentState = MovingDown;
                 break;
             }
 
+
             elevatorControl->currentServiceingMode = NoMode;
-            
+            printf("No relevant orders, broadening scope\n");
             while(1){
                 elevatorControlUpdateInfo(elevatorControl);
 
@@ -106,11 +113,13 @@ int main(){
                 }
 
                 if(elevatorControlCheckIfShouldService(elevatorControl)){
+                    printf("Serviceing floor\n");
                     elevatorControl->currentState = ServicingFloor;
                     break;
                 }
 
                 if(isThereRequestAbove(elevatorControl->orderHandler, elevatorControl->currentFloor)){
+                    printf("I see a request above, moving up\n");
                     elevatorControl->currentServiceingMode = UpMode;
                     elevatorControl->currentState = MovingUp;
                     elevatorControlMoveElevatorUp();
@@ -118,15 +127,18 @@ int main(){
                 }
 
                 if(isThereRequestBelow(elevatorControl->orderHandler, elevatorControl->currentFloor)){
+                    printf("I see a request below, moving down\n");
                     elevatorControl->currentServiceingMode = DownMode;
                     elevatorControl->currentState = MovingDown;
                     elevatorControlMoveElevatorDown();
+
                     break;
                 }
             }
             break;
 
         case EmergencyStop:
+            printf("EMERGENCY! STOPPING AND CLEARING ORDERS\n");
             elevio_stopLamp(1);
             elevatorControlStopElevator();
             elevatorControlClearAllOrders(elevatorControl);
@@ -148,7 +160,7 @@ int main(){
                 elevatorControlCloseDoor(elevatorControl);
             }
 
-            elevatorControl->currentState = Startup;
+            elevatorControl->currentState = Idle;
             break;
 
         case MovingUp:
@@ -160,29 +172,33 @@ int main(){
                     if (elevio_stopButton()){
                         elevatorControlStopElevator();
                         elevatorControl->currentState = EmergencyStop;
-                        break;
+                        goto emergency;
                     }
                     int floor = elevio_floorSensor();
                     if (floor != -1){
-                    elevatorControlUpdateFloor(elevatorControl, floor);
+                        elevatorControlUpdateFloor(elevatorControl, floor);
+                        break;
                     }
                 }
                 if (elevatorControlCheckIfShouldService(elevatorControl)){
                     elevatorControlStopElevator();
+                    elevatorControlUpdateInfo(elevatorControl);
                     elevatorControl->currentState = ServicingFloor;
                     break;
                 }
 
-                if (!isThereRequestBelow(elevatorControl->orderHandler,elevatorControl->currentFloor)){
+                if (!isThereRequestAbove(elevatorControl->orderHandler,elevatorControl->currentFloor)){
                     elevatorControlStopElevator();
                     elevatorControl->currentState = Idle;
                     break;
                 }
+                
             }
             break;
 
         case MovingDown:
             while (1){
+            
                 elevatorControlUpdateInfo(elevatorControl);
                 int lastFloor = elevatorControl->currentFloor;
                 while (lastFloor == elevatorControl->currentFloor){
@@ -190,7 +206,7 @@ int main(){
                     if (elevio_stopButton()){
                         elevatorControlStopElevator();
                         elevatorControl->currentState = EmergencyStop;
-                        break;
+                        goto emergency;
                     }
 
                     int floor = elevio_floorSensor();
@@ -220,8 +236,8 @@ int main(){
             elevatorControlUpdateInfo(elevatorControl);
             elevatorControlOpenDoor(elevatorControl);
             elevatorControl->timer = time(NULL);
-            elevatorControlDeleteOrdersOnFloor(elevatorControl);
             
+            printf("Waiting\n");
             while (!hasBeen3Seconds(elevatorControl->timer)){
                 elevatorControlUpdateInfo(elevatorControl);
                 if(elevatorControlCheckObstruction()){
@@ -234,12 +250,35 @@ int main(){
                     break;
                 }
             }
+            elevatorControlDeleteOrdersOnFloor(elevatorControl, elevatorControl->currentFloor);
+            printf("That was a loong time \n");
             
             if (elevatorControl->currentState == EmergencyStop){
                 break;
             }
+            while (elevatorControl->door.doorOpen){
+                    
+                    if (elevio_stopButton()){
+                     elevatorControl->currentState = EmergencyStop;
+                    break;
+                    }
 
-            elevatorControlCloseDoor(elevatorControl);
+                    if (!elevatorControlCheckObstruction())
+                    {
+                        elevatorControlCloseDoor(elevatorControl);
+                        break;
+                    }else{
+                        while (elevatorControlCheckObstruction()){
+                            elevatorControl->timer = time(NULL);
+                        }
+                        while(!hasBeen3Seconds(elevatorControl->timer)){
+
+                        }
+                        elevatorControlCloseDoor(elevatorControl);
+                        break;
+                    }
+            }
+
             elevatorControl->currentState = Idle;
         
             break;
