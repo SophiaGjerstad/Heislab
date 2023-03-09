@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ElevatorControl.h"
+#include "time.h"
 //#include <sys/types.h>
 //#include <sys/socket.h>
 //#include <netdb.h>
@@ -14,6 +15,7 @@ ElevatorControlStruct* elevatorControlInitializer(void){
     elevatorControl.currentServiceingMode = NoMode;
     elevatorControl.orderHandler = *orderHandlerInitializer();
     elevatorControl.door = *initializeDoor();
+    elevatorControl.timer = time(NULL);
     return &elevatorControl;
 }
 
@@ -109,12 +111,6 @@ void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer){
                 addToOrderHandlerMatrix(&elevatorControlPointer->orderHandler, f, b);
             }
         }
-
-    if(elevio_obstruction()){
-            elevio_stopLamp(1);
-    } else {
-            elevio_stopLamp(0);
-    }
 }
 
 void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer){
@@ -129,6 +125,16 @@ void elevatorControlClearAllOrders(ElevatorControlStruct *elevatorControlPointer
         elevatorControlDeleteOrdersOnFloor(elevatorControlPointer);
     }
 
+}
+
+bool hasBeen3Seconds(double start_time) {
+    double end = time(NULL);
+    if(difftime(end,start_time)<=3) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 
