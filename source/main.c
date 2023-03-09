@@ -12,58 +12,65 @@ int main(){
 
     elevio_init();
 
-    ElevatorControlStruct elevatorControl = *elevatorControlInitializer();
+    ElevatorControlStruct elevatorControl_o = elevatorControlInitializer();
+    ElevatorControlStruct *elevatorControl = &elevatorControl_o;
     while (1){
         
         if (elevio_stopButton()){
-            elevatorControl.currentState = EmergencyStop;
+            elevatorControl->currentState = EmergencyStop;
         }
 
-        switch (elevatorControl.currentState){
+        switch (elevatorControl->currentState){
 
         case Startup:
-            if (elevatorControl.door.doorOpen == false){
+            if (elevatorControl->door.doorOpen == false){
 
                 elevatorControlMoveElevatorDown();
-
-                while (elevio_floorSensor == -1){
-                    elevatorControlUpdateInfo(&elevatorControl);
+                bool done = false;
+                while (!done){
+                    int floor = elevio_floorSensor();
+                    if (floor != -1){
+                        elevatorControlUpdateFloor(elevatorControl, floor);
+                        break;
+                    }
+                    elevatorControlUpdateInfo(elevatorControl);
                     if (elevio_stopButton()){
                         elevatorControlStopElevator();
-                        elevatorControl.currentState = EmergencyStop;
+                        elevatorControl->currentState = EmergencyStop;
                         break;
                     }
                 }
-
+               
+                
                 if (elevio_stopButton()){
                         elevatorControlStopElevator();
-                        elevatorControlOpenDoor(&elevatorControl);
-                        elevatorControl.currentState = EmergencyStop;
+                        elevatorControlOpenDoor(elevatorControl);
+                        elevatorControl->currentState = EmergencyStop;
                         break;
                 }
 
                 elevatorControlStopElevator();
-                elevatorControl.currentState = Idle;
+                elevatorControl->currentState = Idle;
             } else {
-                while (elevatorControl.door.doorOpen){
+                while (elevatorControl->door.doorOpen){
                     
                     if (elevio_stopButton()){
-                     elevatorControl.currentState = EmergencyStop;
+                     elevatorControl->currentState = EmergencyStop;
                     break;
                     }
 
                     if (!elevatorControlCheckObstruction())
                     {
-                        elevatorControlCloseDoor(&elevatorControl);
+                        elevatorControlCloseDoor(elevatorControl);
                         break;
                     }else{
                         while (elevatorControlCheckObstruction()){
-                            elevatorControl.timer = time(NULL);
+                            elevatorControl->timer = time(NULL);
                         }
-                        while(!hasBeen3Seconds(elevatorControl.timer)){
+                        while(!hasBeen3Seconds(elevatorControl->timer)){
 
                         }
-                        elevatorControlCloseDoor(&elevatorControl);
+                        elevatorControlCloseDoor(elevatorControl);
                         break;
                     }
                 }
@@ -73,46 +80,46 @@ int main(){
 
         case Idle:
             
-            elevatorControlUpdateInfo(&elevatorControl);
-            if ((elevatorControl.currentServiceingMode == UpMode) && isThereRequestAbove(&elevatorControl.orderHandler,elevatorControl.currentFloor)){
+            elevatorControlUpdateInfo(elevatorControl);
+            if ((elevatorControl->currentServiceingMode == UpMode) && isThereRequestAbove(elevatorControl->orderHandler,elevatorControl->currentFloor)){
                 elevatorControlMoveElevatorUp();
-                elevatorControl.currentState = MovingUp;
+                elevatorControl->currentState = MovingUp;
                 break;
             }
 
-            if ((elevatorControl.currentServiceingMode == DownMode) && isThereRequestBelow(&elevatorControl.orderHandler,elevatorControl.currentFloor)){
+            if ((elevatorControl->currentServiceingMode == DownMode) && isThereRequestBelow(elevatorControl->orderHandler,elevatorControl->currentFloor)){
                 elevatorControlMoveElevatorDown();
-                elevatorControl.currentState = MovingDown;
+                elevatorControl->currentState = MovingDown;
                 break;
             }
 
-            elevatorControl.currentServiceingMode == NoMode;
+            elevatorControl->currentServiceingMode = NoMode;
             
             while(1){
-                elevatorControlUpdateInfo(&elevatorControl);
+                elevatorControlUpdateInfo(elevatorControl);
 
                 if (elevio_stopButton()){
                     elevatorControlStopElevator();
-                    elevatorControlOpenDoor(&elevatorControl);
-                    elevatorControl.currentState = EmergencyStop;
+                    elevatorControlOpenDoor(elevatorControl);
+                    elevatorControl->currentState = EmergencyStop;
                     break;
                 }
 
-                if(elevatorControlCheckIfShouldService(&elevatorControl)){
-                    elevatorControl.currentState == ServicingFloor;
+                if(elevatorControlCheckIfShouldService(elevatorControl)){
+                    elevatorControl->currentState = ServicingFloor;
                     break;
                 }
 
-                if(isThereRequestAbove(&elevatorControl.orderHandler, elevatorControl.currentFloor)){
-                    elevatorControl.currentServiceingMode = UpMode;
-                    elevatorControl.currentState = MovingUp;
+                if(isThereRequestAbove(elevatorControl->orderHandler, elevatorControl->currentFloor)){
+                    elevatorControl->currentServiceingMode = UpMode;
+                    elevatorControl->currentState = MovingUp;
                     elevatorControlMoveElevatorUp();
                     break;
                 }
 
-                if(isThereRequestBelow(&elevatorControl.orderHandler, elevatorControl.currentFloor)){
-                    elevatorControl.currentServiceingMode = DownMode;
-                    elevatorControl.currentState = MovingDown;
+                if(isThereRequestBelow(elevatorControl->orderHandler, elevatorControl->currentFloor)){
+                    elevatorControl->currentServiceingMode = DownMode;
+                    elevatorControl->currentState = MovingDown;
                     elevatorControlMoveElevatorDown();
                     break;
                 }
@@ -122,50 +129,53 @@ int main(){
         case EmergencyStop:
             elevio_stopLamp(1);
             elevatorControlStopElevator();
-            elevatorControlClearAllOrders(&elevatorControl);
+            elevatorControlClearAllOrders(elevatorControl);
             
             while (elevio_stopButton()){
                 
             }
             
-            elevatorControl.timer = time(NULL);
+            elevatorControl->timer = time(NULL);
             elevio_stopLamp(0);
 
-            if (elevatorControl.door.doorOpen){
+            if (elevatorControl->door.doorOpen){
                 
-                while(!hasBeen3Seconds(elevatorControl.timer)){
+                while(!hasBeen3Seconds(elevatorControl->timer)){
                     if (elevatorControlCheckObstruction()){
-                        elevatorControl.timer = time(NULL);
+                        elevatorControl->timer = time(NULL);
                     }
                 }
-                elevatorControlCloseDoor(&elevatorControl);
+                elevatorControlCloseDoor(elevatorControl);
             }
 
-            elevatorControl.currentState = Startup;
+            elevatorControl->currentState = Startup;
             break;
 
         case MovingUp:
             while (1){
-                elevatorControlUpdateInfo(&elevatorControl);
-                int lastFloor = elevatorControl.currentFloor;
-                while (lastFloor == elevatorControl.currentFloor){
-                    elevatorControlUpdateInfo(&elevatorControl);
+                elevatorControlUpdateInfo(elevatorControl);
+                int lastFloor = elevatorControl->currentFloor;
+                while (lastFloor == elevatorControl->currentFloor){
+                    elevatorControlUpdateInfo(elevatorControl);
                     if (elevio_stopButton()){
                         elevatorControlStopElevator();
-                        elevatorControl.currentState = EmergencyStop;
+                        elevatorControl->currentState = EmergencyStop;
                         break;
                     }
-                    elevatorControlUpdateFloor(&elevatorControl);
+                    int floor = elevio_floorSensor();
+                    if (floor != -1){
+                    elevatorControlUpdateFloor(elevatorControl, floor);
+                    }
                 }
-                if (elevatorControlCheckIfShouldService(&elevatorControl)){
+                if (elevatorControlCheckIfShouldService(elevatorControl)){
                     elevatorControlStopElevator();
-                    elevatorControl.currentState = ServicingFloor;
+                    elevatorControl->currentState = ServicingFloor;
                     break;
                 }
 
-                if (!isThereRequestBelow(&elevatorControl,elevatorControl.currentFloor)){
+                if (!isThereRequestBelow(elevatorControl->orderHandler,elevatorControl->currentFloor)){
                     elevatorControlStopElevator();
-                    elevatorControl.currentState = Idle;
+                    elevatorControl->currentState = Idle;
                     break;
                 }
             }
@@ -173,27 +183,31 @@ int main(){
 
         case MovingDown:
             while (1){
-                elevatorControlUpdateInfo(&elevatorControl);
-                int lastFloor = elevatorControl.currentFloor;
-                while (lastFloor == elevatorControl.currentFloor){
-                    elevatorControlUpdateInfo(&elevatorControl);
+                elevatorControlUpdateInfo(elevatorControl);
+                int lastFloor = elevatorControl->currentFloor;
+                while (lastFloor == elevatorControl->currentFloor){
+                    elevatorControlUpdateInfo(elevatorControl);
                     if (elevio_stopButton()){
                         elevatorControlStopElevator();
-                        elevatorControl.currentState = EmergencyStop;
+                        elevatorControl->currentState = EmergencyStop;
                         break;
                     }
-                    elevatorControlUpdateFloor(&elevatorControl);
+
+                    int floor = elevio_floorSensor();
+                    if (floor != -1){
+                    elevatorControlUpdateFloor(elevatorControl, floor);
+                    }
                 }
 
-                if (elevatorControlCheckIfShouldService(elevatorControl.currentFloor)){
+                if (elevatorControlCheckIfShouldService(elevatorControl)){
                     elevatorControlStopElevator();
-                    elevatorControl.currentState = ServicingFloor;
+                    elevatorControl->currentState = ServicingFloor;
                     break;
                 }
                 
-                if (!isThereRequestBelow(&elevatorControl,elevatorControl.currentFloor)){
+                if (!isThereRequestBelow(elevatorControl->orderHandler,elevatorControl->currentFloor)){
                     elevatorControlStopElevator();
-                    elevatorControl.currentState = Idle;
+                    elevatorControl->currentState = Idle;
                     break;
                 }
             }
@@ -203,35 +217,35 @@ int main(){
         
         case ServicingFloor:
             
-            elevatorControlUpdateInfo(&elevatorControl);
-            elevatorControlOpenDoor(&elevatorControl);
-            elevatorControl.timer = time(NULL);
-            elevatorControlDeleteOrdersOnFloor(&elevatorControl);
+            elevatorControlUpdateInfo(elevatorControl);
+            elevatorControlOpenDoor(elevatorControl);
+            elevatorControl->timer = time(NULL);
+            elevatorControlDeleteOrdersOnFloor(elevatorControl);
             
-            while (!hasBeen3Seconds(elevatorControl.timer)){
-                elevatorControlUpdateInfo(&elevatorControl);
+            while (!hasBeen3Seconds(elevatorControl->timer)){
+                elevatorControlUpdateInfo(elevatorControl);
                 if(elevatorControlCheckObstruction()){
-                    elevatorControl.timer = time(NULL);
+                    elevatorControl->timer = time(NULL);
                 }
 
                 if (elevio_stopButton()){
                     elevatorControlStopElevator();
-                    elevatorControl.currentState = EmergencyStop;
+                    elevatorControl->currentState = EmergencyStop;
                     break;
                 }
             }
             
-            if (elevatorControl.currentState == EmergencyStop){
+            if (elevatorControl->currentState == EmergencyStop){
                 break;
             }
 
-            elevatorControlCloseDoor(&elevatorControl);
-            elevatorControl.currentState = Idle;
+            elevatorControlCloseDoor(elevatorControl);
+            elevatorControl->currentState = Idle;
         
             break;
         
         default:
-            elevatorControl.currentState = Startup;
+            elevatorControl->currentState = Startup;
             break;
         }
     }

@@ -8,7 +8,7 @@
 //#include <assert.h>
 //#include <pthread.h>
 
-ElevatorControlStruct* elevatorControlInitializer(void){
+ElevatorControlStruct elevatorControlInitializer(void){
     ElevatorControlStruct elevatorControl;
     elevatorControl.currentFloor = 0;
     elevatorControl.currentState = Startup;
@@ -16,7 +16,7 @@ ElevatorControlStruct* elevatorControlInitializer(void){
     elevatorControl.orderHandler = *orderHandlerInitializer();
     elevatorControl.door = *initializeDoor();
     elevatorControl.timer = time(NULL);
-    return &elevatorControl;
+    return elevatorControl;
 }
 
 void elevatorControlSetElevatorMode(ElevatorControlStruct *elevatorControlPointer, ServiceMode typeOfServiceMode){
@@ -46,10 +46,10 @@ void elevatorControlCloseDoor(ElevatorControlStruct *elevatorControlPointer){
 }
 
 
-void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer){
-    if (elevio_floorSensor != -1){
-        elevatorControlPointer->currentFloor = elevio_floorSensor;
-        elevio_floorIndicator(elevio_floorSensor());
+void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer, int floor){
+    if (floor != -1){
+        elevatorControlPointer->currentFloor = elevio_floorSensor();
+        elevio_floorIndicator(floor);
     }
 }
 
@@ -58,7 +58,7 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
     {
     case UpMode:
         //Stopper dersom det er en relevant bestilling på etasjen
-        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, UpRequest)){ 
+        if (isThereRequestAtFloor(elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, UpRequest)){ 
             return true;
         }
         return false;
@@ -66,7 +66,7 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
 
     case DownMode:
         //Stopper dersom det er en relevant bestilling på etasjen
-        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, DownRequest)){ 
+        if (isThereRequestAtFloor(elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, DownRequest)){ 
             return true;
         }
         return false;
@@ -74,10 +74,10 @@ bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlP
 
     case NoMode:
         //Stopper dersom det er en relevant bestilling på etasjen. Sjekker begge request typer.
-        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, UpRequest)){ 
+        if (isThereRequestAtFloor(elevatorControlPointer->orderHandler, elevatorControlPointer->currentFloor, UpRequest)){ 
             return true;
         }
-        if (isThereRequestAtFloor(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor, DownRequest)){
+        if (isThereRequestAtFloor(elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor, DownRequest)){
             return true;
         }
         
@@ -116,8 +116,8 @@ void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer){
 
 void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer){
     for (int button = 0; button < N_BUTTONS; button++){
-        elevio_buttonLamp(elevatorControlPointer->currentFloor - 1, button, 0);
-        deleteFromOrderHandlerMatrix(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor - 1, button);
+        elevio_buttonLamp(elevatorControlPointer->currentFloor, button, 0);
+        deleteFromOrderHandlerMatrix(&elevatorControlPointer->orderHandler,elevatorControlPointer->currentFloor, button);
     }
 }
 

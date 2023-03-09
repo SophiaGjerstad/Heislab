@@ -18,13 +18,13 @@ typedef struct ElevatorControlStruct{
     double timer;
 }ElevatorControlStruct;
 
-ElevatorControlStruct* elevatorControlInitializer(void);
+ElevatorControlStruct elevatorControlInitializer(void);
 void elevatorControlSetElevatorMode(ElevatorControlStruct *elevatorControlPointer, ServiceMode typeOfServiceMode);
 void elevatorControlSetElevatorState(ElevatorControlStruct *elevatorControlPointer, State typeOfState);
 bool elevatorControlCheckObstruction(void); // returnerer true dersom det er en obstruksjon
 void elevatorControlOpenDoor(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlCloseDoor(ElevatorControlStruct *elevatorControlPointer);
-void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer);
+void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer, int floor);
 bool elevatorControlCheckIfShouldService(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlMoveElevatorUp();
 void elevatorControlMoveElevatorDown();
