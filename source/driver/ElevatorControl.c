@@ -103,14 +103,15 @@ void elevatorControlStopElevator(){
 }
 
 void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer){
-
-     for(int f = 0; f < N_FLOORS; f++){
-            for(int b = 0; b < N_BUTTONS; b++){
-                int btnPressed = elevio_callButton(f, b);
+    for(int f = 0; f < N_FLOORS; f++){
+        for(int b = 0; b < N_BUTTONS; b++){
+            int btnPressed = elevio_callButton(f, b);
+            if (btnPressed){
                 elevio_buttonLamp(f, b, btnPressed);
                 addToOrderHandlerMatrix(&elevatorControlPointer->orderHandler, f, b);
             }
         }
+    }
 }
 
 void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer){
