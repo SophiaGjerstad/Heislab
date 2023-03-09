@@ -16,7 +16,6 @@ int main(){
         
         if (elevio_stopButton()){
             elevatorControl.currentState = EmergencyStop;
-            continue;
         }
 
         switch (elevatorControl.currentState){
