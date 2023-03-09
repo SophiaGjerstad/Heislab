@@ -15,12 +15,13 @@ typedef struct ElevatorControlStruct{
     ServiceMode currentServiceingMode;
     OrderHandlerStruct orderHandler;
     Door door;
+    double timer;
 }ElevatorControlStruct;
 
 ElevatorControlStruct* elevatorControlInitializer(void);
 void elevatorControlSetElevatorMode(ElevatorControlStruct *elevatorControlPointer, ServiceMode typeOfServiceMode);
 void elevatorControlSetElevatorState(ElevatorControlStruct *elevatorControlPointer, State typeOfState);
-bool elevatorControlCheckObstruction(void);
+bool elevatorControlCheckObstruction(void); // returnerer true dersom det er en obstruksjon
 void elevatorControlOpenDoor(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlCloseDoor(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlUpdateFloor(ElevatorControlStruct *elevatorControlPointer);
@@ -32,3 +33,4 @@ void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer);
 void elevatorControlClearAllOrders(ElevatorControlStruct *elevatorControlPointer);
 
+bool hasBeen3Seconds(double start_time);
