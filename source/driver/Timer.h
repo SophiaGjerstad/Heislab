@@ -1,5 +1,5 @@
 #pragma once
 
-void TimerAlertAfter3Seconds(void);
+bool TimerAlertAfter3Seconds(void);
 
 //void resetTimer(void); not needed. Just call start timer and startTimerAndAlertAt3Seconds();

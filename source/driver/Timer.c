@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdbool.h>
 //#include <sys/types.h>
 //#include <sys/socket.h>
 //#include <netdb.h>
@@ -8,7 +9,7 @@
 //#include <pthread.h>
 #include "Timer.h"
 
-void TimerAlertAfter3Seconds(void) {
+bool TimerAlertAfter3Seconds(void) {
     double start = time(NULL);
     double diff = 0;
     while(diff<3) {
