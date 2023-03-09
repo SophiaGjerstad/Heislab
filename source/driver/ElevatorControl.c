@@ -111,6 +111,7 @@ void elevatorControlUpdateInfo(ElevatorControlStruct *elevatorControlPointer){
                 addToOrderHandlerMatrix(&elevatorControlPointer->orderHandler, f, b);
             }
         }
+    }
 }
 
 void elevatorControlDeleteOrdersOnFloor(ElevatorControlStruct *elevatorControlPointer){
