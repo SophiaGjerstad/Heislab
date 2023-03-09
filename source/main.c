@@ -16,6 +16,7 @@ int main(){
         
         if (elevio_stopButton()){
             elevatorControl.currentState = EmergencyStop;
+            continue;
         }
 
         switch (elevatorControl.currentState){
@@ -54,8 +55,8 @@ int main(){
                         elevatorControlStopElevator();
                         elevatorControlOpenDoor(&elevatorControl);
                         elevatorControl.currentState = EmergencyStop;
-                        continue;
-                    }
+                        break;
+                }
 
                     if(elevatorControlCheckIfShouldService(&elevatorControl)){
                         elevatorControl.currentState == ServicingFloor;
@@ -181,10 +182,9 @@ int main(){
             elevatorControlClearAllOrders(&elevatorControl);
             
             while (elevio_stopButton()){
-                
+                elevatorControl.timer = time(NULL);
             }
-            
-            elevatorControl.timer = time(NULL);
+
             elevio_stopLamp(0);
 
             if (elevatorControl.door.doorOpen){
