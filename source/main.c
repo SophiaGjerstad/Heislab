@@ -181,9 +181,10 @@ int main(){
             elevatorControlClearAllOrders(&elevatorControl);
             
             while (elevio_stopButton()){
-                elevatorControl.timer = time(NULL);
+                
             }
-
+            
+            elevatorControl.timer = time(NULL);
             elevio_stopLamp(0);
 
             if (elevatorControl.door.doorOpen){
